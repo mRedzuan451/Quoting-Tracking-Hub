@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quoting & Tracking Hub</title>
+    <link rel="icon" href="/path/to/your/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app-container">
+        <div id="loading-spinner" class="loading-spinner hidden"></div>
+        <p id="loading-message" class="hidden">Loading application...</p>
+
+        <section id="auth-page" class="app-section hidden">
+            <div class="auth-card">
+                <h2>Welcome!</h2>
+                <form id="auth-form">
+                    <input type="email" id="auth-email" placeholder="Email" required>
+                    <input type="password" id="auth-password" placeholder="Password" required>
+                    <button type="submit" id="auth-submit-btn" class="btn-primary">Login</button>
+                </form>
+                <button id="auth-google-btn" class="btn-secondary">Sign in with Google</button>
+                <p>
+                    <span id="auth-toggle-text">Don't have an account?</span>
+                    <button id="auth-toggle-btn" class="btn-link">Sign Up</button>
+                </p>
+                <p id="auth-error-message" class="error-message"></p>
+            </div>
+        </section>
+
+        <section id="dashboard-page" class="app-section hidden">
+            <header class="app-header">
+                <img id="company-logo-header" src="" alt="Company Logo" class="header-logo hidden">
+                <h1>Dashboard</h1>
+                <button id="logout-btn" class="btn-secondary">Logout</button>
+            </header>
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h3>Quick Actions</h3>
+                    <button id="generate-quote-btn" class="btn-primary">Generate New Quote</button>
+                    <button id="view-tracker-btn" class="btn-primary">View Financial Tracker</button>
+                    <button id="company-settings-btn" class="btn-secondary">Company Settings</button>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Summary Overview</h3>
+                    <p>Total Income: <span id="summary-income">$0.00</span></p>
+                    <p>Total Expenses: <span id="summary-expenses">$0.00</span></p>
+                    <p>Net Profit: <span id="summary-profit">$0.00</span></p>
+                </div>
+            </div>
+        </section>
+
+        <section id="quote-page" class="app-section hidden">
+            <header class="app-header">
+                <button id="back-to-dashboard-from-quote" class="btn-secondary">← Back to Dashboard</button>
+                <img id="company-logo-quote" src="" alt="Company Logo" class="header-logo hidden">
+                <h1>Quote Generator</h1>
+            </header>
+            <div class="quote-container">
+                <form id="quote-form">
+                    <div class="form-group">
+                        <label for="client-name">Client Name:</label>
+                        <input type="text" id="client-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="quote-date">Date:</label>
+                        <input type="date" id="quote-date" required>
+                    </div>
+
+                    <h3>Quote Items</h3>
+                    <div id="quote-items-container">
+                        <div class="quote-item">
+                            <input type="text" class="item-description" placeholder="Description" required>
+                            <input type="number" class="item-quantity" placeholder="Qty" min="1" value="1" required>
+                            <input type="number" class="item-price" placeholder="Unit Price" step="0.01" min="0" required>
+                            <span class="item-total">$0.00</span>
+                            <button type="button" class="btn-danger remove-item-btn">X</button>
+                        </div>
+                    </div>
+                    <button type="button" id="add-item-btn" class="btn-secondary">Add Item</button>
+
+                    <div class="quote-summary">
+                        <p>Subtotal: <span id="quote-subtotal">$0.00</span></p>
+                        <div class="form-group">
+                            <label for="quote-discount">Discount (%):</label>
+                            <input type="number" id="quote-discount" value="0" min="0" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="quote-tax">Tax (%):</label>
+                            <input type="number" id="quote-tax" value="0" min="0" max="100">
+                        </div>
+                        <h3>Grand Total: <span id="quote-grand-total">$0.00</span></h3>
+                    </div>
+
+                    <div class="quote-actions">
+                        <button type="button" id="copy-quote-btn" class="btn-primary">Copy Quote Text</button>
+                        <button type="button" id="print-quote-btn" class="btn-secondary">Print Quote</button>
+                        <button type="submit" id="save-quote-btn" class="btn-primary">Save & Add to Tracker</button>
+                    </div>
+                    <p id="quote-message" class="success-message"></p>
+                </form>
+            </div>
+        </section>
+
+        <section id="tracker-page" class="app-section hidden">
+            <header class="app-header">
+                <button id="back-to-dashboard-from-tracker" class="btn-secondary">← Back to Dashboard</button>
+                <img id="company-logo-tracker" src="" alt="Company Logo" class="header-logo hidden">
+                <h1>Financial Tracker</h1>
+            </header>
+            <div class="tracker-container">
+                <div class="summary-card">
+                    <h3>Summary</h3>
+                    <p>Total Income: <span id="tracker-total-income">$0.00</span></p>
+                    <p>Total Expenses: <span id="tracker-total-expenses">$0.00</span></p>
+                    <p>Net Profit: <span id="tracker-net-profit">$0.00</span></p>
+                </div>
+
+                <div class="add-entry-card">
+                    <h3>Add New Entry</h3>
+                    <form id="add-entry-form">
+                        <div class="form-group">
+                            <label for="entry-type">Type:</label>
+                            <select id="entry-type" required>
+                                <option value="invoice">Invoice (Income)</option>
+                                <option value="expense">Expense</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="entry-description">Description:</label>
+                            <input type="text" id="entry-description" placeholder="e.g., Project A Payment, Office Supplies" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="entry-amount">Amount:</label>
+                            <input type="number" id="entry-amount" step="0.01" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="entry-date">Date:</label>
+                            <input type="date" id="entry-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="entry-category">Category (Optional):</label>
+                            <input type="text" id="entry-category" placeholder="e.g., Freelance, Utilities">
+                        </div>
+                        <button type="submit" class="btn-primary">Add Entry</button>
+                    </form>
+                    <p id="entry-message" class="success-message"></p>
+                </div>
+
+                <div class="entries-card">
+                    <h3>Recent Entries</h3>
+                    <table class="tracker-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tracker-entries-list">
+                            <tr>
+                                <td colspan="5" style="text-align: center;">No entries yet.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="settings-page" class="app-section hidden">
+            <header class="app-header">
+                <button id="back-to-dashboard-from-settings" class="btn-secondary">← Back to Dashboard</button>
+                <img id="company-logo-settings" src="" alt="Company Logo" class="header-logo hidden">
+                <h1>Company Settings</h1>
+            </header>
+            <div class="settings-container">
+                <form id="company-settings-form">
+                    <div class="form-group">
+                        <label for="logo-upload">Company Logo:</label>
+                        <input type="file" id="logo-upload" accept="image/*">
+                        <img id="current-logo-preview" src="" alt="Current Logo" class="current-logo-preview hidden">
+                    </div>
+                    <div class="form-group">
+                        <label for="primary-color-picker">Primary Brand Color:</label>
+                        <input type="color" id="primary-color-picker" value="#3498db">
+                    </div>
+                    <div class="form-group">
+                        <label for="secondary-color-picker">Secondary Brand Color:</label>
+                        <input type="color" id="secondary-color-picker" value="#2ecc71">
+                    </div>
+                    <div class="form-group">
+                        <label for="font-selector">Body Font Family:</label>
+                        <select id="font-selector">
+                            <option value="Arial, sans-serif">Arial</option>
+                            <option value="Helvetica, sans-serif">Helvetica</option>
+                            <option value="Verdana, sans-serif">Verdana</option>
+                            <option value="'Roboto', sans-serif">Roboto (Google Font)</option>
+                            <option value="'Open Sans', sans-serif">Open Sans (Google Font)</option>
+                        </select>
+                    </div>
+                    <button type="submit" id="save-settings-btn" class="btn-primary">Save Changes</button>
+                </form>
+                <p id="settings-message" class="success-message"></p>
+            </div>
+        </section>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+
+    <script type="module" src="src/firebase-config.js"></script>
+    <script type="module" src="src/auth.js"></script>
+    <script type="module" src="src/company-settings.js"></script>
+    <script type="module" src="src/quote-generator.js"></script>
+    <script type="module" src="src/financial-tracker.js"></script>
+    <script type="module" src="src/ui-manager.js"></script>
+    <script type="module" src="src/app.js"></script>
+</body>
+</html>
