@@ -558,3 +558,29 @@ label {
         padding: 3px 8px;
     }
 }
+/* Inside style.css */
+.entry-type {
+    padding: 4px 8px;
+    border-radius: var(--border-radius-small);
+    font-size: 0.85em;
+    font-weight: bold;
+    color: white;
+}
+
+.entry-type.invoice {
+    background-color: var(--secondary-brand-color); /* Green */
+}
+
+.entry-type.expense {
+    background-color: var(--btn-danger-bg); /* Red */
+}
+
+.income {
+    color: var(--secondary-brand-color); /* Green text for income amounts */
+    font-weight: bold;
+}
+
+.expense {
+    color: var(--btn-danger-bg); /* Red text for expense amounts */
+    font-weight: bold;
+}
