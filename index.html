@@ -211,11 +211,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
     ```
 
-**Reasoning for `index.html` change:**
-When you use `import { getAuth } from "firebase/auth";` in your `firebase-config.js`, your browser's module loader will automatically fetch the necessary "firebase/auth" module *if it's available*. The Firebase CDN for v9+ typically provides these individual modules. By only linking `firebase-app.js` (the core), you allow your local `src/firebase-config.js` to define and export the *instances* of auth, db, and storage, which other files then import.
-
-After making these changes to both `src/firebase-config.js` and `index.html`, your Firebase integration will be using the more modern and efficient modular SDK approach.
-
     <script type="module" src="src/firebase-config.js"></script>
     <script type="module" src="src/auth.js"></script>
     <script type="module" src="src/company-settings.js"></script>
