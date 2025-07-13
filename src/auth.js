@@ -1,5 +1,7 @@
 // src/auth.js
 import { auth, db } from './firebase-config.js';
+import { GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signOut, onAuthStateChanged as onFirebaseAuthStateChanged } from "firebase/auth"; // Modular Auth imports
+import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore"; // Modular Firestore imports
 import { showPage, showLoadingSpinner, hideLoadingSpinner, displayMessage } from './ui-manager.js';
 
 const USERS_COLLECTION = 'users';
@@ -15,15 +17,16 @@ const COMPANIES_COLLECTION = 'companies';
 async function signUp(email, password) {
     showLoadingSpinner();
     try {
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
         // Create a new company document and link it to the user
-        const companyRef = db.collection(COMPANIES_COLLECTION).doc(); // Auto-generate company ID
-        await companyRef.set({
+        // Using doc() with no argument in collection() creates a new document with auto-ID
+        const companyRef = doc(db, COMPANIES_COLLECTION,); // Auto-generate company ID
+        await setDoc(companyRef, {
             ownerId: user.uid,
             name: `${user.email.split('@')[0]}'s Company`, // Default company name
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            createdAt: serverTimestamp(), // Use modular serverTimestamp
             settings: { // Default settings
                 logoUrl: '',
                 primaryColor: '#3498db',
@@ -33,11 +36,11 @@ async function signUp(email, password) {
         });
 
         // Update user's document to link to the new company
-        await db.collection(USERS_COLLECTION).doc(user.uid).set({
+        await setDoc(doc(db, USERS_COLLECTION, user.uid), {
             email: user.email,
             companyId: companyRef.id, // Store the auto-generated company ID
             role: 'owner', // Default role
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            createdAt: serverTimestamp() // Use modular serverTimestamp
         });
 
         displayMessage('auth-error-message', 'Account created successfully!', 'success');
@@ -45,7 +48,7 @@ async function signUp(email, password) {
     } catch (error) {
         console.error("Error signing up:", error);
         displayMessage('auth-error-message', error.message, 'error');
-        throw error; // Re-throw to allow further handling if needed
+        throw error;
     } finally {
         hideLoadingSpinner();
     }
@@ -60,7 +63,7 @@ async function signUp(email, password) {
 async function signIn(email, password) {
     showLoadingSpinner();
     try {
-        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
         displayMessage('auth-error-message', 'Signed in successfully!', 'success');
         return userCredential;
     } catch (error) {
@@ -79,21 +82,21 @@ async function signIn(email, password) {
 async function signInWithGoogle() {
     showLoadingSpinner();
     try {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        const userCredential = await auth.signInWithPopup(provider);
+        const provider = new GoogleAuthProvider(); // Use modular GoogleAuthProvider
+        const userCredential = await signInWithPopup(auth, provider); // Use modular signInWithPopup
         const user = userCredential.user;
 
         // Check if user already has a company associated
-        const userDocRef = db.collection(USERS_COLLECTION).doc(user.uid);
-        const userDoc = await userDocRef.get();
+        const userDocRef = doc(db, USERS_COLLECTION, user.uid); // Use modular doc
+        const userDoc = await getDoc(userDocRef); // Use modular getDoc
 
-        if (!userDoc.exists || !userDoc.data().companyId) {
+        if (!userDoc.exists() || !userDoc.data().companyId) { // userDoc.exists() for modular
             // If new user or existing user without company, create a new company
-            const companyRef = db.collection(COMPANIES_COLLECTION).doc();
-            await companyRef.set({
+            const companyRef = doc(db, COMPANIES_COLLECTION); // Auto-generate company ID
+            await setDoc(companyRef, {
                 ownerId: user.uid,
                 name: `${user.displayName || user.email.split('@')[0]}'s Company`,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                createdAt: serverTimestamp(),
                 settings: {
                     logoUrl: '',
                     primaryColor: '#3498db',
@@ -102,15 +105,15 @@ async function signInWithGoogle() {
                 }
             });
             // Update user document with companyId
-            await userDocRef.set({
+            await setDoc(userDocRef, {
                 email: user.email,
                 companyId: companyRef.id,
                 role: 'owner',
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                createdAt: serverTimestamp()
             }, { merge: true }); // Use merge to update existing doc without overwriting
         } else {
             // If user already has a company, just ensure email is set if it wasn't
-            await userDocRef.set({ email: user.email }, { merge: true });
+            await setDoc(userDocRef, { email: user.email }, { merge: true });
         }
 
         displayMessage('auth-error-message', 'Signed in with Google successfully!', 'success');
@@ -131,7 +134,7 @@ async function signInWithGoogle() {
 async function signOutUser() {
     showLoadingSpinner();
     try {
-        await auth.signOut();
+        await signOut(auth); // Use modular signOut
         displayMessage('auth-error-message', 'Signed out successfully!', 'success');
         showPage('auth-page'); // Redirect to login page after sign out
     } catch (error) {
@@ -149,7 +152,7 @@ async function signOutUser() {
  * @param {function} callback - Function to call with the user object (or null if logged out).
  */
 function onAuthStateChanged(callback) {
-    return auth.onAuthStateChanged(callback);
+    return onFirebaseAuthStateChanged(auth, callback); // Use modular onAuthStateChanged
 }
 
 /**
@@ -159,8 +162,8 @@ function onAuthStateChanged(callback) {
  */
 async function getUserCompanyData(userId) {
     try {
-        const userDoc = await db.collection(USERS_COLLECTION).doc(userId).get();
-        if (userDoc.exists) {
+        const userDoc = await getDoc(doc(db, USERS_COLLECTION, userId)); // Use modular doc and getDoc
+        if (userDoc.exists()) { // userDoc.exists() for modular
             return userDoc.data();
         }
         return null;

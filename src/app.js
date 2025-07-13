@@ -1,5 +1,5 @@
 // src/app.js
-import { auth, db } from './firebase-config.js'; // Ensure db is imported if used directly here
+// No direct Firebase SDK imports here anymore, all via firebase-config.js or other modules
 import {
     signUp, signIn, signInWithGoogle, signOutUser, onAuthStateChanged, getUserCompanyData
 } from './auth.js';
@@ -76,8 +76,8 @@ function setupEventListeners() {
                     ui.settings.currentLogoPreview.src = settings.logoUrl;
                     ui.settings.currentLogoPreview.classList.remove('hidden');
                 } else {
-                    ui.settings.currentLogoPreview.classList.add('hidden');
                     ui.settings.currentLogoPreview.src = '';
+                    ui.settings.currentLogoPreview.classList.add('hidden');
                 }
             }
         }
@@ -293,7 +293,7 @@ async function handleSaveSettings(event) {
  * Initializes and manages the Firebase authentication state listener.
  */
 function initializeAuthStateListener() {
-    onAuthStateChanged(async (user) => {
+    onAuthStateChanged(async (user) => { // Use the onAuthStateChanged from auth.js
         currentUser = user;
         hideLoadingSpinner();
         if (user) {

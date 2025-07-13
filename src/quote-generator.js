@@ -1,8 +1,11 @@
 // src/quote-generator.js
 import { db } from './firebase-config.js';
+import { collection, addDoc, serverTimestamp } from "firebase/firestore"; // Modular Firestore imports
 import { displayMessage, showLoadingSpinner, hideLoadingSpinner } from './ui-manager.js';
 
 const COMPANIES_COLLECTION = 'companies';
+const QUOTES_COLLECTION = 'quotes';
+const INVOICES_COLLECTION = 'invoices';
 
 /**
  * Adds a new empty item row to the quote form dynamically.
@@ -132,7 +135,7 @@ function getQuoteData() {
         discountPercent: discount,
         taxPercent: tax,
         grandTotal: parseFloat(grandTotal.toFixed(2)),
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        createdAt: serverTimestamp() // Use modular serverTimestamp
     };
 }
 
@@ -183,23 +186,23 @@ async function saveQuoteAsInvoice(quoteData, companyId, userId) {
     showLoadingSpinner();
     try {
         // Save the full quote object
-        const quoteRef = await db.collection(COMPANIES_COLLECTION).doc(companyId)
-                                 .collection('quotes').add(quoteData);
-        console.log("Quote saved with ID:", quoteRef.id);
+        const quotesCollectionRef = collection(db, COMPANIES_COLLECTION, companyId, QUOTES_COLLECTION); // Modular collection ref
+        const quoteDocRef = await addDoc(quotesCollectionRef, quoteData); // Modular addDoc
+        console.log("Quote saved with ID:", quoteDocRef.id);
 
         // Create a simplified invoice entry from the quote
+        const invoicesCollectionRef = collection(db, COMPANIES_COLLECTION, companyId, INVOICES_COLLECTION); // Modular collection ref
         const invoiceEntry = {
             type: 'invoice',
-            description: `Invoice for ${quoteData.clientName} (Quote ID: ${quoteRef.id.substring(0, 8)})`,
+            description: `Invoice for ${quoteData.clientName} (Quote ID: ${quoteDocRef.id.substring(0, 8)})`,
             amount: quoteData.grandTotal,
             date: quoteData.quoteDate,
             category: 'Quote/Project',
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            quoteRef: quoteRef.id // Reference to the original quote
+            createdAt: serverTimestamp(), // Use modular serverTimestamp
+            quoteRef: quoteDocRef.id // Reference to the original quote
         };
 
-        await db.collection(COMPANIES_COLLECTION).doc(companyId)
-                .collection('invoices').add(invoiceEntry);
+        await addDoc(invoicesCollectionRef, invoiceEntry); // Modular addDoc
 
         displayMessage('quote-message', 'Quote saved and added to tracker successfully!', 'success');
         resetQuoteForm(); // Clear form after saving
@@ -218,6 +221,6 @@ export {
     formatQuoteText,
     printQuote,
     saveQuoteAsInvoice,
-    attachQuoteItemListeners, // Exported to be called initially by app.js
-    resetQuoteForm // Exported for external reset if needed
+    attachQuoteItemListeners,
+    resetQuoteForm
 };

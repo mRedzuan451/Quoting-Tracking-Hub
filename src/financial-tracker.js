@@ -1,5 +1,6 @@
 // src/financial-tracker.js
 import { db } from './firebase-config.js';
+import { collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, serverTimestamp } from "firebase/firestore"; // Modular Firestore imports
 import { displayMessage, showLoadingSpinner, hideLoadingSpinner } from './ui-manager.js';
 
 const COMPANIES_COLLECTION = 'companies';
@@ -25,16 +26,16 @@ async function addEntry(companyId, userId, type, description, amount, date, cate
     showLoadingSpinner();
     try {
         const collectionRef = type === 'invoice'
-            ? db.collection(COMPANIES_COLLECTION).doc(companyId).collection(INVOICES_COLLECTION)
-            : db.collection(COMPANIES_COLLECTION).doc(companyId).collection(EXPENSES_COLLECTION);
+            ? collection(db, COMPANIES_COLLECTION, companyId, INVOICES_COLLECTION) // Modular collection ref
+            : collection(db, COMPANIES_COLLECTION, companyId, EXPENSES_COLLECTION); // Modular collection ref
 
-        await collectionRef.add({
+        await addDoc(collectionRef, { // Modular addDoc
             userId,
             description,
             amount: parseFloat(amount), // Ensure amount is stored as a number
             date,
             category,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            createdAt: serverTimestamp() // Modular serverTimestamp
         });
         displayMessage('entry-message', `${type === 'invoice' ? 'Invoice' : 'Expense'} added successfully!`, 'success');
         document.getElementById('add-entry-form').reset(); // Clear form
@@ -57,10 +58,11 @@ async function getEntries(companyId) {
     if (!companyId) return [];
     showLoadingSpinner();
     try {
-        const invoicesSnapshot = await db.collection(COMPANIES_COLLECTION).doc(companyId)
-                                        .collection(INVOICES_COLLECTION).orderBy('date', 'desc').get();
-        const expensesSnapshot = await db.collection(COMPANIES_COLLECTION).doc(companyId)
-                                        .collection(EXPENSES_COLLECTION).orderBy('date', 'desc').get();
+        const invoicesQuery = query(collection(db, COMPANIES_COLLECTION, companyId, INVOICES_COLLECTION), orderBy('date', 'desc')); // Modular query
+        const expensesQuery = query(collection(db, COMPANIES_COLLECTION, companyId, EXPENSES_COLLECTION), orderBy('date', 'desc')); // Modular query
+
+        const invoicesSnapshot = await getDocs(invoicesQuery); // Modular getDocs
+        const expensesSnapshot = await getDocs(expensesQuery); // Modular getDocs
 
         const invoices = invoicesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), type: 'invoice' }));
         const expenses = expensesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), type: 'expense' }));
@@ -94,8 +96,8 @@ async function deleteEntry(companyId, entryType, entryId) {
     showLoadingSpinner();
     try {
         const collectionPath = entryType === 'invoice' ? INVOICES_COLLECTION : EXPENSES_COLLECTION;
-        await db.collection(COMPANIES_COLLECTION).doc(companyId)
-                .collection(collectionPath).doc(entryId).delete();
+        const entryDocRef = doc(db, COMPANIES_COLLECTION, companyId, collectionPath, entryId); // Modular doc
+        await deleteDoc(entryDocRef); // Modular deleteDoc
         displayMessage('entry-message', `Entry deleted successfully!`, 'success');
         getEntries(companyId); // Refresh entries after deletion
     } catch (error) {
@@ -141,8 +143,6 @@ function renderEntries(entries) {
             const entryId = event.target.dataset.id;
             const entryType = event.target.dataset.type;
             if (confirm(`Are you sure you want to delete this ${entryType} entry?`)) {
-                // companyId needs to be passed from app.js, this is just the call structure
-                // App.js will handle getting the current companyId and passing it here
                 document.dispatchEvent(new CustomEvent('delete-tracker-entry', { detail: { entryId, entryType } }));
             }
         });

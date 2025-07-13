@@ -1,5 +1,7 @@
 // src/company-settings.js
 import { db, storage } from './firebase-config.js';
+import { doc, getDoc, updateDoc } from "firebase/firestore"; // Modular Firestore imports
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Modular Storage imports
 import { displayMessage, showLoadingSpinner, hideLoadingSpinner } from './ui-manager.js';
 
 const COMPANIES_COLLECTION = 'companies';
@@ -14,8 +16,9 @@ async function getCompanySettings(companyId) {
     if (!companyId) return null;
     showLoadingSpinner();
     try {
-        const companyDoc = await db.collection(COMPANIES_COLLECTION).doc(companyId).get();
-        if (companyDoc.exists && companyDoc.data().settings) {
+        const companyDocRef = doc(db, COMPANIES_COLLECTION, companyId); // Modular doc
+        const companyDoc = await getDoc(companyDocRef); // Modular getDoc
+        if (companyDoc.exists() && companyDoc.data().settings) { // .exists() for modular
             return companyDoc.data().settings;
         }
         return null;
@@ -38,7 +41,8 @@ async function updateCompanySettings(companyId, newSettings) {
     if (!companyId || !newSettings) throw new Error("Company ID and settings are required.");
     showLoadingSpinner();
     try {
-        await db.collection(COMPANIES_COLLECTION).doc(companyId).update({
+        const companyDocRef = doc(db, COMPANIES_COLLECTION, companyId); // Modular doc
+        await updateDoc(companyDocRef, { // Modular updateDoc
             settings: newSettings // Overwrite the entire settings object
         });
         displayMessage('settings-message', 'Settings updated successfully!', 'success');
@@ -61,10 +65,9 @@ async function uploadCompanyLogo(companyId, file) {
     if (!companyId || !file) throw new Error("Company ID and file are required for logo upload.");
     showLoadingSpinner();
     try {
-        const storageRef = storage.ref();
-        const logoRef = storageRef.child(`${STORAGE_LOGOS_PATH}${companyId}/${file.name}`);
-        const uploadTask = await logoRef.put(file);
-        const downloadURL = await uploadTask.ref.getDownloadURL();
+        const logoRef = ref(storage, `${STORAGE_LOGOS_PATH}${companyId}/${file.name}`); // Modular ref
+        const uploadTaskSnapshot = await uploadBytes(logoRef, file); // Modular uploadBytes
+        const downloadURL = await getDownloadURL(uploadTaskSnapshot.ref); // Modular getDownloadURL
         displayMessage('settings-message', 'Logo uploaded successfully!', 'success');
         return downloadURL;
     } catch (error) {
@@ -91,8 +94,6 @@ function applyCompanyBranding(settings) {
     // Apply colors
     if (settings.primaryColor) {
         root.style.setProperty('--primary-brand-color', settings.primaryColor);
-        // Also update RGB components for rgba() usage if needed (e.g., box-shadow)
-        // This requires converting hex to RGB. For simplicity, we'll assume a simpler usage for now.
     }
     if (settings.secondaryColor) {
         root.style.setProperty('--secondary-brand-color', settings.secondaryColor);
