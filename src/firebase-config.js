@@ -8,7 +8,7 @@ import { getStorage } from "firebase/storage"; // Import Storage service
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyBg6U1xu6hRjbgS5SyjBXa3QAbEb8LzEn0",
+    apiKey: "AIzaSyDHScvSPcbdYP857-Bp_K06PHXyiT2roLA",
     authDomain: "quote-track-hub.firebaseapp.com",
     projectId: "quote-track-hub",
     storageBucket: "quote-track-hub.firebasestorage.app",
