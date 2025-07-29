@@ -1,10 +1,10 @@
 // src/firebase-config.js
 
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth"; // Import Authentication service
-import { getFirestore } from "firebase/firestore"; // Import Firestore service
-import { getStorage } from "firebase/storage"; // Import Storage service
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { getStorage } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {

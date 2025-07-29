@@ -1,7 +1,7 @@
 // src/company-settings.js
 import { db, storage } from './firebase-config.js';
-import { doc, getDoc, updateDoc } from "firebase/firestore"; // Modular Firestore imports
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Modular Storage imports
+import { doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"; // Modular Firestore imports
+import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js"; // Modular Storage imports
 import { displayMessage, showLoadingSpinner, hideLoadingSpinner } from './ui-manager.js';
 
 const COMPANIES_COLLECTION = 'companies';

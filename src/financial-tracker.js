@@ -1,6 +1,6 @@
 // src/financial-tracker.js
 import { db } from './firebase-config.js';
-import { collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, serverTimestamp } from "firebase/firestore"; // Modular Firestore imports
+import { collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"; // Modular Firestore imports
 import { displayMessage, showLoadingSpinner, hideLoadingSpinner } from './ui-manager.js';
 
 const COMPANIES_COLLECTION = 'companies';

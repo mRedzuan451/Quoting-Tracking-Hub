@@ -1,6 +1,6 @@
 // src/quote-generator.js
 import { db } from './firebase-config.js';
-import { collection, addDoc, serverTimestamp } from "firebase/firestore"; // Modular Firestore imports
+import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"; // Modular Firestore imports
 import { displayMessage, showLoadingSpinner, hideLoadingSpinner } from './ui-manager.js';
 
 const COMPANIES_COLLECTION = 'companies';
