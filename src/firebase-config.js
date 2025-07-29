@@ -8,12 +8,12 @@ import { getStorage } from "firebase/storage"; // Import Storage service
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyDHScvSPcbdYP857-Bp_K06PHXyiT2roLA",
-    authDomain: "quote-track-hub.firebaseapp.com",
-    projectId: "quote-track-hub",
-    storageBucket: "quote-track-hub.firebasestorage.app",
-    messagingSenderId: "181893116482",
-    appId: "1:181893116482:web:ac2ea5c9b348f9265b33db"
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 // Initialize Firebase App
