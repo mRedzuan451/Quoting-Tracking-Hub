@@ -1,0 +1,10 @@
+{
+  "name": "quoting-tracking-hub",
+  "version": "1.0.0",
+  "description": "Application for freelancers and SMEs to manage quotes, invoices, and expenses",
+  "scripts": {
+    "build": "node scripts/create-config.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

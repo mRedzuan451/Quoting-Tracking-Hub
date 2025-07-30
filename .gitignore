@@ -7,6 +7,9 @@ node_modules/
 # Ignore build output folder
 dist/
 
+# Ignore generated config file with secrets
+src/firebase-config.js
+
 # Ignore common OS-generated files
 .DS_Store
 Thumbs.db

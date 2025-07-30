@@ -8,23 +8,20 @@ import { getStorage } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-st
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-    appId: import.meta.env.VITE_FIREBASE_APP_ID
+    apiKey: "__API_KEY__",
+    authDomain: "__AUTH_DOMAIN__",
+    projectId: "__PROJECT_ID__",
+    storageBucket: "__STORAGE_BUCKET__",
+    messagingSenderId: "__MESSAGING_SENDER_ID__",
+    appId: "__APP_ID__"
 };
 
 // Initialize Firebase App
 const app = initializeApp(firebaseConfig);
-
-// Get service instances using the new modular syntax
 const auth = getAuth(app); // For Authentication
 const db = getFirestore(app); // For Firestore Database
 const storage = getStorage(app); // For Firebase Storage
 
-// Export these instances so they can be imported and used in other modules
 export { auth, db, storage };
 
 console.log("Firebase initialized and services exported using modular SDK.");
