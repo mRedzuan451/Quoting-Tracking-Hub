@@ -1,8 +1,7 @@
 // src/auth.js
 import { auth, db } from './firebase-config.js';
 import { GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signOut, onAuthStateChanged as onFirebaseAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"; // Modular Auth imports
-import { doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"; // Modular Firestore imports
-import { showPage, showLoadingSpinner, hideLoadingSpinner, displayMessage } from './ui-manager.js';
+import { doc, setDoc, getDoc, serverTimestamp, collection } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";import { showPage, showLoadingSpinner, hideLoadingSpinner, displayMessage } from './ui-manager.js';
 
 const USERS_COLLECTION = 'users';
 const COMPANIES_COLLECTION = 'companies';
