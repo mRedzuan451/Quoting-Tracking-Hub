@@ -92,7 +92,7 @@ async function signInWithGoogle() {
 
         if (!userDoc.exists() || !userDoc.data().companyId) { // userDoc.exists() for modular
             // If new user or existing user without company, create a new company
-            const companyRef = doc(db, COMPANIES_COLLECTION); // Auto-generate company ID
+            const companyRef = doc(collection(db, COMPANIES_COLLECTION)); // This is the corrected line
             await setDoc(companyRef, {
                 ownerId: user.uid,
                 name: `${user.displayName || user.email.split('@')[0]}'s Company`,
