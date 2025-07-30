@@ -1,4 +1,12 @@
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+ Ignore environment variables file
+.env
+
+# Ignore packages installed by Node.js
+node_modules/
+
+# Ignore build output folder
+dist/
+
+# Ignore common OS-generated files
+.DS_Store
+Thumbs.db
